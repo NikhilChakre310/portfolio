@@ -1,23 +1,50 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PERSONAL_INFO } from '../../data/portfolioData';
-import SpotlightCard from '../react-bits/SpotlightCard';
-import Magnet from '../react-bits/Magnet';
-import ShinyText from '../react-bits/ShinyText';
-import { Send, Copy, Check, FileText, Sparkles, Mail, MapPin } from 'lucide-react';
+import { Send, Copy, Check, ArrowUpRight } from 'lucide-react';
 import { GithubIcon, LinkedinIcon, TwitterXIcon } from '../ui/Icons';
 
+gsap.registerPlugin(ScrollTrigger);
+
 /**
- * Contact Section (The Convergence)
- * Chapter 06: The morphing entity settles back into a serene, radiant luminary ring.
- * Working interactive form UI stub with realistic submission states and social handles.
+ * Contact — Neon glassmorphic split layout
+ * Deep frosted form panel with glowing neon inputs and accent social icons.
  */
 export default function Contact() {
   const sectionRef = useRef(null);
+  const contentRef = useRef(null);
   const [copied, setCopied] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [formStatus, setFormStatus] = useState('idle'); // 'idle' | 'submitting' | 'success' | 'error'
+  const [formStatus, setFormStatus] = useState('idle');
 
-  const handleCopyEmail = () => {
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        el.querySelectorAll('.contact-reveal'),
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 75%',
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => ctx.revert();
+  }, []);
+
+  const handleCopy = () => {
     navigator.clipboard.writeText(PERSONAL_INFO.email);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
@@ -26,254 +53,215 @@ export default function Contact() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) return;
-
     setFormStatus('submitting');
-
-    // Simulate graceful network dispatch
     setTimeout(() => {
       setFormStatus('success');
       setFormData({ name: '', email: '', message: '' });
-      setTimeout(() => setFormStatus('idle'), 6000);
+      setTimeout(() => setFormStatus('idle'), 5000);
     }, 1200);
   };
+
+  const socials = [
+    { name: 'GitHub', href: PERSONAL_INFO.github, icon: <GithubIcon className="w-4 h-4" /> },
+    { name: 'LinkedIn', href: PERSONAL_INFO.linkedin, icon: <LinkedinIcon className="w-4 h-4" /> },
+    { name: 'Twitter', href: PERSONAL_INFO.twitter, icon: <TwitterXIcon className="w-4 h-4" /> },
+  ];
 
   return (
     <section
       id="contact"
       ref={sectionRef}
-      className="relative min-h-screen flex flex-col justify-between px-4 sm:px-8 lg:px-16 pt-20 sm:pt-32 pb-10 sm:pb-12 z-10 overflow-hidden"
+      className="relative px-6 sm:px-8 lg:px-12 py-28 sm:py-40"
     >
-      <div className="max-w-6xl mx-auto w-full my-auto">
-        {/* Section Header */}
-        <div className="flex items-center gap-3 mb-4">
-          <span className="text-xs font-mono font-semibold tracking-widest text-sky-400 uppercase flex items-center gap-2">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Chapter 06 // Connect & Inquiries</span>
-          </span>
-          <span className="h-px w-8 sm:w-12 bg-sky-500/40" />
-        </div>
+      <div ref={contentRef} className="max-w-6xl mx-auto relative z-10">
+        {/* Label */}
+        <p className="contact-reveal text-[11px] font-mono tracking-[0.2em] uppercase text-neutral-500 mb-6">
+          Contact
+        </p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
-          {/* Left Column: Direct Outreach & Socials */}
-          <div className="lg:col-span-5 flex flex-col justify-between space-y-6 sm:space-y-8">
-            <div>
-              <h2 className="text-3xl sm:text-5xl md:text-6xl font-extrabold font-display tracking-tight text-white leading-[1.05]">
-                Let’s build something extraordinary.
-              </h2>
-              <p className="mt-4 text-neutral-400 text-sm sm:text-base md:text-lg font-light leading-relaxed">
-                Whether you are looking to hire a full-stack engineer, build scalable web architectures, or collaborate on innovative digital experiences—my inbox is open.
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+          {/* Left — Info */}
+          <div className="contact-reveal">
+            <h2
+              className="text-2xl sm:text-4xl md:text-5xl font-serif font-normal leading-tight text-white mb-6"
+              style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+            >
+              Let's build something together.
+            </h2>
+
+            <p className="text-sm sm:text-base text-neutral-400 font-light leading-relaxed mb-10">
+              Whether you're looking to hire a full-stack engineer, build scalable architectures,
+              or collaborate on innovative experiences — I'd love to hear from you.
+            </p>
+
+            {/* Email — glass panel */}
+            <div className="glass-subtle p-4 flex items-center justify-between gap-3 mb-8">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center glass-tag shrink-0">
+                  <span className="text-sm">✉</span>
+                </div>
+                <span className="text-sm font-mono text-neutral-300 truncate">{PERSONAL_INFO.email}</span>
+              </div>
+              <button
+                onClick={handleCopy}
+                className="glass-tag flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-neutral-400 hover:text-[var(--accent)] cursor-pointer shrink-0"
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-3 h-3 text-[var(--accent)]" />
+                    <span className="text-[var(--accent)]">Copied</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3 h-3" />
+                    <span>Copy</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Location & Status */}
+            <div className="space-y-3 mb-10">
+              <p className="text-xs font-mono text-neutral-500 flex items-center gap-2">
+                📍 {PERSONAL_INFO.location}
+              </p>
+              <p className="text-xs font-mono text-neutral-500 flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] shadow-[0_0_8px_var(--accent)]" />
+                Open for opportunities
               </p>
             </div>
 
-            {/* Email Direct Pill */}
-            <div className="p-3.5 sm:p-4 rounded-2xl glass-panel border border-neutral-800/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-              <div className="flex items-center gap-3 overflow-hidden min-w-0">
-                <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center shrink-0">
-                  <Mail className="w-4 h-4 text-sky-400" />
-                </div>
-                <div className="truncate min-w-0">
-                  <p className="text-[10px] sm:text-[11px] font-mono text-neutral-400 uppercase">Direct Frequency</p>
-                  <p className="text-xs sm:text-sm font-mono text-white truncate">{PERSONAL_INFO.email}</p>
-                </div>
-              </div>
-
-              <Magnet magnetStrength={0.2} padding={20} wrapperClassName="self-end sm:self-auto">
-                <button
-                  onClick={handleCopyEmail}
-                  className="px-3.5 py-2 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs font-mono transition-colors flex items-center gap-1.5 shrink-0 cursor-pointer"
-                  title="Copy email to clipboard"
+            {/* Social Links — neon glass circles */}
+            <div className="flex items-center gap-3">
+              {socials.map((s) => (
+                <a
+                  key={s.name}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="glass-subtle flex items-center justify-center w-11 h-11 !rounded-full text-neutral-400 hover:text-[var(--accent)] hover:border-[var(--border-glass-hover)] transition-all duration-300"
+                  aria-label={s.name}
                 >
-                  {copied ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                      <span className="text-emerald-400">Copied</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5" />
-                      <span>Copy</span>
-                    </>
-                  )}
-                </button>
-              </Magnet>
-            </div>
-
-
-            {/* Location & Status Info */}
-            <div className="space-y-3 font-mono text-xs text-neutral-400">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-sky-400" />
-                <span>{PERSONAL_INFO.location}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Available for Q2/Q3 2026 Opportunities</span>
-              </div>
-            </div>
-
-            {/* Social Pills */}
-            <div>
-              <p className="text-xs font-mono uppercase tracking-wider text-neutral-400 mb-3">Connect / Networks</p>
-              <div className="flex flex-wrap gap-3">
-                <Magnet magnetStrength={0.25} padding={25}>
-                  <a
-                    href={PERSONAL_INFO.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 rounded-xl glass-panel text-neutral-300 hover:text-white hover:border-neutral-700 text-xs font-mono flex items-center gap-2 transition-colors"
-                  >
-                    <GithubIcon className="w-3.5 h-3.5" />
-                    <span>GitHub</span>
-                  </a>
-                </Magnet>
-
-                <Magnet magnetStrength={0.25} padding={25}>
-                  <a
-                    href={PERSONAL_INFO.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 rounded-xl glass-panel text-neutral-300 hover:text-white hover:border-neutral-700 text-xs font-mono flex items-center gap-2 transition-colors"
-                  >
-                    <LinkedinIcon className="w-3.5 h-3.5 text-blue-400" />
-                    <span>LinkedIn</span>
-                  </a>
-                </Magnet>
-
-                <Magnet magnetStrength={0.25} padding={25}>
-                  <a
-                    href={PERSONAL_INFO.twitter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 rounded-xl glass-panel text-neutral-300 hover:text-white hover:border-neutral-700 text-xs font-mono flex items-center gap-2 transition-colors"
-                  >
-                    <TwitterXIcon className="w-3.5 h-3.5 text-sky-400" />
-                    <span>Twitter/X</span>
-                  </a>
-                </Magnet>
-
-
-                <Magnet magnetStrength={0.25} padding={25}>
-                  <a
-                    href={PERSONAL_INFO.resumeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 rounded-xl glass-panel text-neutral-300 hover:text-white hover:border-neutral-700 text-xs font-mono flex items-center gap-2 transition-colors"
-                  >
-                    <FileText className="w-3.5 h-3.5 text-cyan-400" />
-                    <span>Resume (PDF)</span>
-                  </a>
-                </Magnet>
-              </div>
+                  {s.icon}
+                </a>
+              ))}
+              {PERSONAL_INFO.resumeUrl && (
+                <a
+                  href={PERSONAL_INFO.resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-glass flex items-center gap-2 px-5 py-2.5 text-xs font-mono"
+                >
+                  <span>Resume</span>
+                  <ArrowUpRight className="w-3 h-3" />
+                </a>
+              )}
             </div>
           </div>
 
-          {/* Right Column: High-End Contact Form */}
-          <div className="lg:col-span-7">
-            <SpotlightCard
-              spotlightColor="rgba(56, 189, 248, 0.15)"
-              borderColor="rgba(56, 189, 248, 0.3)"
-              className="p-8 sm:p-12 hover:border-sky-500/40 transition-all duration-300"
-            >
-              <h3 className="text-2xl font-bold font-display text-white mb-2">
-                Initiate Project Vision
-              </h3>
-              <p className="text-neutral-400 text-sm mb-8 font-light">
-                Fill out the inquiry channel below and I will respond within 24 hours.
+          {/* Right — Neon Glass Form */}
+          <div className="contact-reveal">
+            <div className="glass shimmer-border p-6 sm:p-10">
+              <h3 className="text-xl font-medium text-white mb-2">Send a Message</h3>
+              <p className="text-sm text-neutral-500 font-light mb-8">
+                I'll get back to you within 24 hours.
               </p>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label htmlFor="name" className="block text-xs font-mono uppercase text-neutral-400 mb-2">
-                    Name / Identity <span className="text-sky-400">*</span>
+                  <label
+                    htmlFor="contact-name"
+                    className="block text-[11px] font-mono uppercase text-neutral-500 mb-2 tracking-wider"
+                  >
+                    Name
                   </label>
                   <input
-                    id="name"
+                    id="contact-name"
                     type="text"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="e.g. Satoshi Nakamoto"
-                    className="w-full px-4 py-3.5 rounded-xl bg-neutral-900/90 border border-neutral-800 text-white placeholder-neutral-600 focus:outline-none focus:border-sky-500/80 focus:ring-1 focus:ring-sky-500/50 font-mono text-sm transition-all"
+                    placeholder="Your name"
+                    className="glass-input w-full px-4 py-3.5 font-mono text-sm"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-xs font-mono uppercase text-neutral-400 mb-2">
-                    Email Address <span className="text-sky-400">*</span>
+                  <label
+                    htmlFor="contact-email"
+                    className="block text-[11px] font-mono uppercase text-neutral-500 mb-2 tracking-wider"
+                  >
+                    Email
                   </label>
                   <input
-                    id="email"
+                    id="contact-email"
                     type="email"
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="satoshi@domain.com"
-                    className="w-full px-4 py-3.5 rounded-xl bg-neutral-900/90 border border-neutral-800 text-white placeholder-neutral-600 focus:outline-none focus:border-sky-500/80 focus:ring-1 focus:ring-sky-500/50 font-mono text-sm transition-all"
+                    placeholder="you@domain.com"
+                    className="glass-input w-full px-4 py-3.5 font-mono text-sm"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-xs font-mono uppercase text-neutral-400 mb-2">
-                    Scope of Collaboration / Message <span className="text-sky-400">*</span>
+                  <label
+                    htmlFor="contact-message"
+                    className="block text-[11px] font-mono uppercase text-neutral-500 mb-2 tracking-wider"
+                  >
+                    Message
                   </label>
                   <textarea
-                    id="message"
-                    rows={4}
+                    id="contact-message"
+                    rows={5}
                     required
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    placeholder="Describe your vision, timeline, and architectural objectives..."
-                    className="w-full px-4 py-3.5 rounded-xl bg-neutral-900/90 border border-neutral-800 text-white placeholder-neutral-600 focus:outline-none focus:border-sky-500/80 focus:ring-1 focus:ring-sky-500/50 font-mono text-sm transition-all resize-none"
+                    placeholder="Tell me about your project..."
+                    className="glass-input w-full px-4 py-3.5 font-mono text-sm resize-none"
                   />
                 </div>
 
-                <div className="pt-2">
-                  <Magnet magnetStrength={0.2} padding={30}>
-                    <button
-                      type="submit"
-                      disabled={formStatus === 'submitting'}
-                      className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-white text-neutral-950 font-medium font-mono text-xs tracking-wider uppercase transition-all duration-300 hover:bg-neutral-200 hover:shadow-[0_0_30px_rgba(56,189,248,0.3)] flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-50"
-                    >
-                      {formStatus === 'submitting' ? (
-                        <>
-                          <span className="w-3.5 h-3.5 border-2 border-neutral-900 border-t-transparent rounded-full animate-spin" />
-                          <span>Transmitting...</span>
-                        </>
-                      ) : formStatus === 'success' ? (
-                        <>
-                          <Check className="w-4 h-4 text-emerald-600" />
-                          <span className="text-emerald-900 font-semibold">Message Transmitted</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>Transmit Message</span>
-                          <Send className="w-3.5 h-3.5" />
-                        </>
-                      )}
-                    </button>
-                  </Magnet>
-
-                  {formStatus === 'success' && (
-                    <p className="mt-3 text-xs font-mono text-emerald-400 flex items-center gap-1.5">
-                      <Check className="w-3.5 h-3.5" />
-                      <span>Thank you! Your dispatch was received. {PERSONAL_INFO.name.split(' ')[0]} will reply promptly.</span>
-                    </p>
+                <button
+                  type="submit"
+                  disabled={formStatus === 'submitting'}
+                  className="btn-solid w-full sm:w-auto px-8 py-3.5 text-sm tracking-wide flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  {formStatus === 'submitting' ? (
+                    <>
+                      <span className="w-3.5 h-3.5 border-2 border-neutral-900 border-t-transparent rounded-full animate-spin" />
+                      <span>Sending...</span>
+                    </>
+                  ) : formStatus === 'success' ? (
+                    <>
+                      <Check className="w-4 h-4 text-[var(--accent)]" />
+                      <span className="text-[#060610]">Sent!</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Send Message</span>
+                      <Send className="w-3.5 h-3.5" />
+                    </>
                   )}
-                </div>
+                </button>
+
+                {formStatus === 'success' && (
+                  <p className="text-xs font-mono text-[var(--accent)] flex items-center gap-1.5 mt-2">
+                    <Check className="w-3.5 h-3.5" />
+                    Thank you! I'll get back to you soon.
+                  </p>
+                )}
               </form>
-            </SpotlightCard>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Footer Colophon */}
-      <footer className="mt-24 pt-8 border-t border-neutral-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-neutral-400">
-        <p>© {new Date().getFullYear()} {PERSONAL_INFO.name}. All rights reserved.</p>
-        <p className="flex items-center gap-2">
-          <span>Engineered with</span>
-          <ShinyText text="React • Three.js • GSAP • React Bits" speed={4} />
-        </p>
-      </footer>
+        {/* Footer */}
+        <footer className="mt-28 pt-8 border-t border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-mono text-neutral-500">
+          <p>© {new Date().getFullYear()} {PERSONAL_INFO.name}</p>
+          <p>Built with React · Vite · GSAP</p>
+        </footer>
+      </div>
     </section>
   );
 }

@@ -1,109 +1,124 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { EXPERIENCE_DATA } from '../../data/portfolioData';
-import SpotlightCard from '../react-bits/SpotlightCard';
-import { History, Briefcase, MapPin, CheckCircle2 } from 'lucide-react';
+
+gsap.registerPlugin(ScrollTrigger);
 
 /**
- * Experience Section (The Chronos Strand)
- * Chapter 05: The 3D entity morphs into a continuous dimensional helix/strand,
- * tracing milestones along an interactive chronological timeline.
+ * Experience — Glassmorphic timeline
+ * Frosted glass cards with glowing timeline markers.
  */
 export default function Experience() {
   const sectionRef = useRef(null);
+  const contentRef = useRef(null);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        el.querySelectorAll('.exp-reveal'),
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 75%',
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section
       id="experience"
       ref={sectionRef}
-      className="relative min-h-screen flex flex-col justify-center px-4 sm:px-8 lg:px-16 py-20 sm:py-32 z-10 overflow-hidden"
+      className="relative px-6 sm:px-8 lg:px-12 py-28 sm:py-40"
     >
-      <div className="max-w-5xl mx-auto w-full">
-        {/* Section Header */}
-        <div className="flex items-center gap-3 mb-4">
-          <span className="text-xs font-mono font-semibold tracking-widest text-violet-400 uppercase flex items-center gap-2">
-            <History className="w-3.5 h-3.5" />
-            <span>Chapter 05 // Career Journey</span>
-          </span>
-          <span className="h-px w-8 sm:w-12 bg-violet-500/40" />
-        </div>
+      {/* Ambient orb */}
+      <div
+        className="ambient-orb ambient-orb-accent"
+        style={{ width: '25vw', height: '25vh', top: '50%', left: '-8%', opacity: 0.12 }}
+      />
 
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 sm:mb-16">
-          <div>
-            <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold font-display tracking-tight text-white">
-              Career Trajectory & Impact
-            </h2>
-            <p className="mt-3 text-neutral-400 text-sm sm:text-base md:text-lg max-w-xl font-light">
-              Engineering milestones across agile teams, web applications, cloud backends, and responsive design systems.
-            </p>
-          </div>
-        </div>
+      <div ref={contentRef} className="max-w-4xl mx-auto relative z-10">
+        {/* Label */}
+        <p className="exp-reveal text-[11px] font-mono tracking-[0.2em] uppercase text-neutral-500 mb-6">
+          Experience
+        </p>
 
-        {/* Vertical Chronos Timeline */}
-        <div className="relative border-l border-neutral-800/90 ml-2 sm:ml-6 pl-4 sm:pl-10 space-y-8 sm:space-y-12">
+        {/* Headline */}
+        <h2
+          className="exp-reveal text-2xl sm:text-4xl md:text-5xl font-serif font-normal leading-tight text-white mb-16"
+          style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+        >
+          Career Journey
+        </h2>
+
+        {/* Timeline with glass cards */}
+        <div className="relative ml-4 pl-8 border-l border-white/[0.08]">
           {EXPERIENCE_DATA.map((exp) => (
-            <div key={exp.company} className="relative group">
+            <div key={exp.company} className="exp-reveal relative pb-12 last:pb-0 group">
+              {/* Glowing timeline dot */}
+              <div className="absolute -left-[37px] top-2 w-3 h-3 rounded-full border-2 border-[var(--accent)] bg-[#0a0a0a] group-hover:bg-[var(--accent)] transition-all duration-300 shadow-[0_0_10px_var(--accent-glow)] group-hover:shadow-[0_0_16px_var(--accent)]" />
 
-              {/* Glowing Timeline Marker centered on border line */}
-              <div className="absolute -left-[24px] sm:-left-[48px] top-1.5 flex items-center justify-center">
-                <div className="w-4 h-4 rounded-full bg-neutral-950 border-2 border-violet-400 flex items-center justify-center group-hover:scale-125 transition-transform duration-300 shadow-[0_0_10px_rgba(139,92,246,0.5)]">
-                  <div className="w-1.5 h-1.5 rounded-full bg-violet-400" />
-                </div>
-              </div>
-
-              {/* Card Content */}
-              <SpotlightCard
-                spotlightColor="rgba(139, 92, 246, 0.16)"
-                borderColor="rgba(255, 255, 255, 0.08)"
-                className="p-5 sm:p-8 hover:border-violet-500/40 transition-all duration-300"
-              >
-
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-                  <span className="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-violet-500/15 text-violet-300 border border-violet-500/30">
+              {/* Glass card */}
+              <div className="glass shimmer-border p-6 sm:p-8">
+                {/* Period pill */}
+                <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+                  <span className="glass-tag px-3 py-1 text-[11px] font-mono font-medium text-[var(--accent)]">
                     {exp.period}
                   </span>
-
-                  <div className="flex items-center gap-1.5 text-xs font-mono text-neutral-400">
-                    <MapPin className="w-3.5 h-3.5 text-neutral-500" />
-                    <span>{exp.location}</span>
-                  </div>
+                  <span className="text-[11px] font-mono text-neutral-500">
+                    {exp.location}
+                  </span>
                 </div>
 
-                <div className="mb-4">
-                  <h3 className="text-2xl font-bold font-display text-white group-hover:text-violet-300 transition-colors">
-                    {exp.role}
-                  </h3>
-                  <p className="text-sm font-mono text-neutral-300 mt-1 flex items-center gap-2">
-                    <Briefcase className="w-3.5 h-3.5 text-violet-400" />
-                    <span>{exp.company}</span>
-                  </p>
-                </div>
+                {/* Role */}
+                <h3 className="text-lg sm:text-xl font-medium text-white mb-1 group-hover:text-[var(--accent)] transition-colors duration-300">
+                  {exp.role}
+                </h3>
 
-                <p className="text-neutral-400 text-sm leading-relaxed mb-6">
+                <p className="text-sm font-mono text-neutral-400 mb-4">
+                  {exp.company}
+                </p>
+
+                <p className="text-sm text-neutral-400 font-light leading-relaxed mb-5">
                   {exp.summary}
                 </p>
 
-                {/* Key Bullet Highlights */}
-                <div className="space-y-2.5 mb-6">
-                  {exp.highlights.map((highlight, hIndex) => (
-                    <div key={hIndex} className="flex items-start gap-2.5 text-xs sm:text-sm text-neutral-300">
-                      <CheckCircle2 className="w-4 h-4 text-violet-400 shrink-0 mt-0.5" />
-                      <span>{highlight}</span>
-                    </div>
+                {/* Highlights */}
+                <ul className="space-y-2 mb-6">
+                  {exp.highlights.map((h, i) => (
+                    <li key={i} className="flex items-start gap-3 text-xs sm:text-sm text-neutral-400 font-light">
+                      <span className="w-1 h-1 rounded-full bg-[var(--accent)] mt-2 shrink-0 shadow-[0_0_4px_var(--accent)]" />
+                      <span>{h}</span>
+                    </li>
                   ))}
-                </div>
+                </ul>
 
-                {/* Technologies */}
-                <div className="pt-4 border-t border-neutral-800/80 flex flex-wrap gap-2">
+                {/* Tech — glass tags */}
+                <div className="pt-4 border-t border-white/[0.05] flex flex-wrap gap-2">
                   {exp.technologies.map((tech) => (
                     <span
                       key={tech}
-                      className="px-2.5 py-1 rounded-md text-[11px] font-mono bg-neutral-900/80 border border-neutral-800 text-neutral-400"
+                      className="glass-tag-muted px-2.5 py-1 text-[11px] font-mono text-neutral-500"
                     >
                       {tech}
                     </span>
                   ))}
                 </div>
-              </SpotlightCard>
+              </div>
             </div>
           ))}
         </div>

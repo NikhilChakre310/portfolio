@@ -1,190 +1,151 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PROJECTS_DATA } from '../../data/portfolioData';
-import SpotlightCard from '../react-bits/SpotlightCard';
-import Magnet from '../react-bits/Magnet';
-import { ExternalLink, Sparkles, Layers } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { GithubIcon } from '../ui/Icons';
 
+gsap.registerPlugin(ScrollTrigger);
+
 /**
- * Projects Section (The Dimensional Portal)
- * Chapter 04: The 3D entity expands outward into an open wireframe chassis,
- * revealing the featured creative engineering artifacts.
+ * Projects — Neon glassmorphic stacked cards
+ * Deep frosted panels with vibrant neon accents, shimmer borders, and glass meta pills.
  */
 export default function Projects() {
   const sectionRef = useRef(null);
+  const contentRef = useRef(null);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        el.querySelectorAll('.project-reveal'),
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          stagger: 0.15,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 75%',
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section
       id="projects"
       ref={sectionRef}
-      className="relative min-h-screen flex flex-col justify-center px-4 sm:px-8 lg:px-16 py-20 sm:py-32 z-10 overflow-hidden"
+      className="relative px-6 sm:px-8 lg:px-12 py-28 sm:py-40"
     >
-      <div className="max-w-7xl mx-auto w-full">
-        {/* Section Header */}
-        <div className="flex items-center gap-3 mb-4">
-          <span className="text-xs font-mono font-semibold tracking-widest text-indigo-400 uppercase flex items-center gap-2">
-            <Layers className="w-3.5 h-3.5" />
-            <span>Chapter 04 // Featured Projects</span>
-          </span>
-          <span className="h-px w-8 sm:w-12 bg-indigo-500/40" />
-        </div>
+      <div ref={contentRef} className="max-w-6xl mx-auto relative z-10">
+        {/* Label */}
+        <p className="project-reveal text-[11px] font-mono tracking-[0.2em] uppercase text-neutral-500 mb-6">
+          Selected Work
+        </p>
 
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 sm:mb-16">
-          <div>
-            <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold font-display tracking-tight text-white">
-              Selected Works & Systems
-            </h2>
-            <p className="mt-3 text-neutral-400 text-sm sm:text-base md:text-lg max-w-2xl font-light">
-              Production architectures and creative digital experiences engineered for performance, precision, and visceral engagement.
-            </p>
-          </div>
+        {/* Headline */}
+        <h2
+          className="project-reveal text-2xl sm:text-4xl md:text-5xl font-serif font-normal leading-tight text-white max-w-3xl mb-16"
+          style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+        >
+          Projects & Systems
+        </h2>
 
-          <div className="flex items-center gap-2 text-xs font-mono text-indigo-300 bg-indigo-500/10 border border-indigo-500/30 px-3.5 sm:px-4 py-2 rounded-xl backdrop-blur-md self-start md:self-auto">
-            <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-            <span>Curated Engineering Works</span>
-          </div>
-        </div>
+        {/* Project List — neon glass cards */}
+        <div className="space-y-6">
+          {PROJECTS_DATA.map((project, idx) => (
+            <div
+              key={project.id}
+              className="project-reveal glass shimmer-border p-6 sm:p-8 lg:p-10 group"
+            >
+              {/* Meta pills */}
+              <div className="flex flex-wrap items-center gap-2 mb-6">
+                <span className="glass-tag-muted px-3 py-1 text-[11px] font-mono text-neutral-400">
+                  0{idx + 1}
+                </span>
+                <span className="glass-tag-muted px-3 py-1 text-[11px] font-mono text-neutral-400">
+                  {project.category}
+                </span>
+                <span className="glass-tag-muted px-3 py-1 text-[11px] font-mono text-neutral-400">
+                  {project.year}
+                </span>
+                {project.featured && (
+                  <span className="glass-tag px-3 py-1 text-[11px] font-mono text-[var(--accent)] inline-flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] shadow-[0_0_8px_var(--accent)]" />
+                    Featured
+                  </span>
+                )}
+              </div>
 
-        {/* Asymmetric Showcase Grid */}
-        <div className="space-y-8 sm:space-y-12">
-          {PROJECTS_DATA.map((project, index) => {
-            const isEven = index % 2 === 0;
+              {/* Title */}
+              <h3 className="text-xl sm:text-3xl font-medium text-white mb-3 group-hover:text-[var(--accent)] transition-colors duration-300">
+                {project.title}
+              </h3>
 
-            return (
-              <SpotlightCard
-                key={project.id}
-                spotlightColor="rgba(99, 102, 241, 0.16)"
-                borderColor="rgba(255, 255, 255, 0.08)"
-                className="p-5 sm:p-8 lg:p-12 hover:border-indigo-500/40 transition-all duration-300"
-              >
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12 items-center">
-                  {/* Project Info Column */}
-                  <div className={`lg:col-span-7 flex flex-col justify-between ${isEven ? 'lg:order-1' : 'lg:order-2'}`}>
+              <p className="text-sm text-neutral-400 font-light leading-relaxed mb-6 max-w-3xl">
+                {project.overview}
+              </p>
 
-                    <div>
-                      <div className="flex flex-wrap items-center gap-3 mb-4">
-                        <span className="px-3 py-1 rounded-full text-xs font-mono font-medium bg-indigo-500/10 text-indigo-300 border border-indigo-500/30">
-                          {project.category}
-                        </span>
-                        <span className="text-xs font-mono text-neutral-500">
-                          {project.year}
-                        </span>
-                        {project.featured && (
-                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-violet-500/15 text-violet-300 border border-violet-500/30 flex items-center gap-1">
-                            <span className="w-1 h-1 rounded-full bg-violet-400 animate-ping" />
-                            Flagship
-                          </span>
-                        )}
-                      </div>
+              {/* Tech Tags */}
+              <div className="flex flex-wrap gap-2 mb-8">
+                {project.technologies.map((tech) => (
+                  <span
+                    key={tech}
+                    className="glass-tag-muted px-2.5 py-1 text-[11px] font-mono text-neutral-400"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
 
-                      <h3 className="text-2xl sm:text-4xl font-bold font-display text-white mb-2 hover:text-indigo-300 transition-colors">
-                        {project.title}
-                      </h3>
-
-                      <p className="text-sm sm:text-base font-medium text-neutral-300 mb-4 font-mono">
-                        {project.subtitle}
+              {/* Stats & Links */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 pt-6 border-t border-white/[0.06]">
+                <div className="flex gap-8">
+                  {project.stats.map((st) => (
+                    <div key={st.label}>
+                      <p className="text-[10px] font-mono uppercase text-neutral-500 mb-1">
+                        {st.label}
                       </p>
-
-                      <p className="text-neutral-400 text-sm sm:text-base leading-relaxed mb-6">
-                        {project.overview}
+                      <p className="text-base font-mono font-medium text-white">
+                        {st.value}
                       </p>
-
-                      {/* Tech Stack Pills */}
-                      <div className="flex flex-wrap gap-2 mb-8">
-                        {project.technologies.map((tech) => (
-                          <span
-                            key={tech}
-                            className="px-3 py-1 rounded-md text-xs font-mono bg-neutral-900/90 border border-neutral-800 text-neutral-300"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
                     </div>
-
-                    {/* Stats and Action Links */}
-                    <div className="pt-6 border-t border-neutral-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-                      {/* Metric Stats */}
-                      <div className="grid grid-cols-3 gap-3 sm:flex sm:gap-6 w-full sm:w-auto">
-                        {project.stats.map((st) => (
-                          <div key={st.label}>
-                            <p className="text-[10px] sm:text-xs font-mono uppercase text-neutral-500">{st.label}</p>
-                            <p className="text-base sm:text-lg font-bold font-mono text-white mt-0.5">{st.value}</p>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Interactive Buttons */}
-                      <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-                        <Magnet magnetStrength={0.2} padding={30} wrapperClassName="flex-1 sm:flex-none">
-                          <a
-                            href={project.demoUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full sm:w-auto px-4 sm:px-5 py-2.5 rounded-xl bg-white text-neutral-950 font-medium text-xs font-mono tracking-wide flex items-center justify-center gap-2 transition-transform duration-200 hover:bg-neutral-200 shadow-md"
-                          >
-                            <span>Launch Demo</span>
-                            <ExternalLink className="w-3.5 h-3.5" />
-                          </a>
-                        </Magnet>
-
-                        <Magnet magnetStrength={0.2} padding={30}>
-                          <a
-                            href={project.repoUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-2.5 rounded-xl glass-panel text-neutral-300 hover:text-white hover:border-neutral-700 transition-colors flex items-center justify-center"
-                            aria-label="View Source Code on GitHub"
-                          >
-                            <GithubIcon className="w-4 h-4" />
-                          </a>
-                        </Magnet>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Project Visual Matrix Column */}
-                  <div className={`lg:col-span-5 ${isEven ? 'lg:order-2' : 'lg:order-1'}`}>
-                    <div className={`relative h-48 sm:h-64 lg:h-80 rounded-2xl overflow-hidden border border-neutral-800/90 bg-gradient-to-br ${project.gradient} p-4 sm:p-6 flex flex-col justify-between group-hover:border-indigo-500/40 transition-colors`}>
-
-                      {/* Ambient Grid overlay */}
-                      <div
-                        className="absolute inset-0 opacity-15"
-                        style={{
-                          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.2) 1px, transparent 0)`,
-                          backgroundSize: '24px 24px',
-                        }}
-                      />
-
-                      <div className="relative z-10 flex items-center justify-between">
-                        <span className="text-xs font-mono uppercase text-neutral-400">
-                          Artifact Spec // 0{index + 1}
-                        </span>
-                        <div className="w-2.5 h-2.5 rounded-full bg-indigo-400 shadow-[0_0_12px_#6366f1]" />
-                      </div>
-
-                      {/* Graphic Wireframe Mock Representation */}
-                      <div className="relative z-10 my-auto flex flex-col items-center justify-center text-center p-4">
-                        <div className="w-24 h-24 rounded-2xl border border-white/20 bg-white/5 backdrop-blur-md flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-500">
-                          <span className="text-3xl font-display font-black text-white/90">
-                            0{index + 1}
-                          </span>
-                        </div>
-                        <p className="text-xs font-mono text-neutral-300 tracking-wider uppercase">
-                          High Performance Core
-                        </p>
-                      </div>
-
-                      <div className="relative z-10 flex items-center justify-between text-[11px] font-mono text-neutral-400">
-                        <span>Latency: Optimal</span>
-                        <span>Full-Stack: Production Ready</span>
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              </SpotlightCard>
-            );
-          })}
+
+                <div className="flex items-center gap-3">
+                  <a
+                    href={project.demoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-solid flex items-center gap-2 px-5 py-2 text-xs font-medium"
+                  >
+                    <span>View</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </a>
+                  <a
+                    href={project.repoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-glass flex items-center justify-center w-9 h-9 !p-0"
+                    aria-label="GitHub"
+                  >
+                    <GithubIcon className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

@@ -1,114 +1,107 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SKILLS_DATA } from '../../data/portfolioData';
-import SpotlightCard from '../react-bits/SpotlightCard';
-import { Terminal, Box, Server, Sparkles, Orbit } from 'lucide-react';
+
+gsap.registerPlugin(ScrollTrigger);
 
 /**
- * Skills Section (The Fractured Constellation)
- * Chapter 03: The central object fractures into orbiting particles and fragments.
- * Skills map directly to these fragments across an asymmetric grid.
+ * Skills — Neon glassmorphic domain grid
+ * Deep frosted cards with glowing neon skill tags.
  */
 export default function Skills() {
   const sectionRef = useRef(null);
+  const contentRef = useRef(null);
 
-  const categoryIcons = [
-    <Box key="3d" className="w-5 h-5 text-blue-400" />,
-    <Terminal key="frontend" className="w-5 h-5 text-cyan-400" />,
-    <Server key="backend" className="w-5 h-5 text-indigo-400" />,
-    <Sparkles key="design" className="w-5 h-5 text-sky-400" />,
-  ];
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        el.querySelectorAll('.skill-reveal'),
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 75%',
+            once: true,
+          },
+        }
+      );
+    });
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section
       id="skills"
       ref={sectionRef}
-      className="relative min-h-screen flex flex-col justify-center px-4 sm:px-8 lg:px-16 py-20 sm:py-32 z-10 overflow-hidden"
+      className="relative px-6 sm:px-8 lg:px-12 py-28 sm:py-40"
     >
-      <div className="max-w-7xl mx-auto w-full">
-        {/* Section Header */}
-        <div className="flex items-center gap-3 mb-4">
-          <span className="text-xs font-mono font-semibold tracking-widest text-blue-400 uppercase flex items-center gap-2">
-            <Orbit className="w-3.5 h-3.5" />
-            <span>Chapter 03 // Skills & Architecture</span>
-          </span>
-          <span className="h-px w-8 sm:w-12 bg-blue-500/40" />
-        </div>
+      <div ref={contentRef} className="max-w-6xl mx-auto relative z-10">
+        {/* Label */}
+        <p className="skill-reveal text-[11px] font-mono tracking-[0.2em] uppercase text-neutral-500 mb-6">
+          Expertise
+        </p>
 
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 sm:mb-16">
-          <div>
-            <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold font-display tracking-tight text-white">
-              Technical Stack & Expertise
-            </h2>
-            <p className="mt-3 text-neutral-400 text-sm sm:text-base md:text-lg max-w-2xl font-light">
-              Specialized engineering competencies spanning modern component systems, reactive frontends, distributed cloud architectures, and GPU-accelerated computing.
-            </p>
-          </div>
+        {/* Headline */}
+        <h2
+          className="skill-reveal text-2xl sm:text-4xl md:text-5xl font-serif font-normal leading-tight text-white max-w-3xl mb-6"
+          style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+        >
+          Technical Stack & Expertise
+        </h2>
 
-          <div className="flex items-center gap-2.5 text-xs font-mono text-neutral-300 bg-neutral-900/60 border border-blue-500/30 px-3.5 sm:px-4 py-2 rounded-xl backdrop-blur-md self-start md:self-auto">
-            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-            <span>4 Core Domains • 24 Specializations</span>
-          </div>
-        </div>
+        <p className="skill-reveal text-sm sm:text-base text-neutral-400 font-light leading-relaxed max-w-2xl mb-16">
+          Specialized engineering competencies spanning modern component systems,
+          reactive frontends, distributed cloud architectures, and GPU-accelerated computing.
+        </p>
 
-        {/* Asymmetric Skills Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
-          {SKILLS_DATA.map((category, index) => (
-            <SpotlightCard
+        {/* Skills Grid — neon glass cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {SKILLS_DATA.map((category, idx) => (
+            <div
               key={category.category}
-              spotlightColor="rgba(59, 130, 246, 0.16)"
-              borderColor="rgba(59, 130, 246, 0.28)"
-              className="p-6 sm:p-8 flex flex-col justify-between group hover:border-blue-500/40 transition-all duration-300"
+              className="skill-reveal glass shimmer-border p-6 sm:p-8 group"
             >
-              <div>
-                {/* Category Header */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
-                      {categoryIcons[index]}
-                    </div>
-                    <div>
-                      <h3 className="text-lg sm:text-xl font-bold font-display text-white group-hover:text-blue-300 transition-colors">
-                        {category.category}
-                      </h3>
-                      <p className="text-xs text-neutral-400 font-mono mt-0.5">
-                        Domain 0{index + 1}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <p className="text-neutral-400 text-xs sm:text-sm mb-6 leading-relaxed">
-                  {category.description}
-                </p>
-
-                {/* Skill Pills */}
-                <div className="flex flex-wrap gap-2">
-                  {category.skills.map((skill) => (
-                    <div
-                      key={skill.name}
-                      className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-mono transition-all duration-200 flex items-center gap-1.5 sm:gap-2 border ${
-                        skill.hot
-                          ? 'bg-blue-500/10 border-blue-500/30 text-blue-300 shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:border-blue-400'
-                          : 'bg-neutral-900/80 border-neutral-800 text-neutral-300 hover:border-neutral-700 hover:text-white'
-                      }`}
-                    >
-                      {skill.hot && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping shrink-0" />
-                      )}
-                      <span>{skill.name}</span>
-                      <span className="text-[10px] text-neutral-400 opacity-60">
-                        {skill.level}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+              {/* Header */}
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-base sm:text-lg font-medium text-white group-hover:text-[var(--accent)] transition-colors duration-300">
+                  {category.category}
+                </h3>
+                <span className="text-[11px] font-mono text-neutral-500">
+                  0{idx + 1}
+                </span>
               </div>
 
-              <div className="mt-8 pt-4 border-t border-neutral-800/80 flex items-center justify-between text-xs font-mono text-neutral-400">
-                <span>Domain Status</span>
-                <span className="text-blue-400">Status: Active & Deployed</span>
+              <p className="text-xs text-neutral-500 font-light mb-6 leading-relaxed">
+                {category.description}
+              </p>
+
+              {/* Skill Tags — neon glass pills */}
+              <div className="flex flex-wrap gap-2">
+                {category.skills.map((skill) => (
+                  <span
+                    key={skill.name}
+                    className={`px-3 py-1.5 text-xs font-mono inline-flex items-center gap-1.5 ${
+                      skill.hot ? 'glass-tag text-[var(--accent)]' : 'glass-tag-muted text-neutral-400'
+                    }`}
+                  >
+                    {skill.hot && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] shadow-[0_0_8px_var(--accent)]" />
+                    )}
+                    {skill.name}
+                  </span>
+                ))}
               </div>
-            </SpotlightCard>
+            </div>
           ))}
         </div>
       </div>

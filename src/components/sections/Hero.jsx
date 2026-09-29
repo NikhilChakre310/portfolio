@@ -1,37 +1,61 @@
-import { useRef } from 'react';
-import SplitText from '../react-bits/SplitText';
-import DecryptedText from '../react-bits/DecryptedText';
-import ShinyText from '../react-bits/ShinyText';
-import Magnet from '../react-bits/Magnet';
+import { useRef, useEffect } from 'react';
+import { gsap } from 'gsap';
 import { PERSONAL_INFO } from '../../data/portfolioData';
-import { Sparkles, FileText, ArrowDown } from 'lucide-react';
+import { ArrowDown } from 'lucide-react';
 
 /**
- * Hero Section
- * Opens on a blank, spacious viewport with the single idle 3D morphing object.
- * Reveals high-impact typography using React Bits components.
+ * Hero — Neon glassmorphic opening
+ * Massive serif type with glowing neon accents and frosted glass elements.
  */
 export default function Hero() {
   const sectionRef = useRef(null);
+  const headlineRef = useRef(null);
+  const subtitleRef = useRef(null);
+  const ctaRef = useRef(null);
+  const lineRef = useRef(null);
+  const pillRef = useRef(null);
 
-  const scrollToNext = () => {
-    if (window.lenis) {
-      window.lenis.scrollTo('#about', { duration: 1.2, offset: 0 });
-    } else {
-      const aboutSection = document.getElementById('about');
-      if (aboutSection) {
-        aboutSection.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  };
+  useEffect(() => {
+    const tl = gsap.timeline({ delay: 0.3 });
 
-  const handleCtaClick = (e, href) => {
-    e.preventDefault();
+    tl.fromTo(
+      pillRef.current,
+      { opacity: 0, y: -20, scale: 0.95 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: 'power3.out' }
+    )
+    .fromTo(
+      lineRef.current,
+      { scaleX: 0 },
+      { scaleX: 1, duration: 1.2, ease: 'power3.inOut' },
+      '-=0.3'
+    )
+    .fromTo(
+      headlineRef.current,
+      { opacity: 0, y: 60, filter: 'blur(12px)' },
+      { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.0, ease: 'power3.out' },
+      '-=0.6'
+    )
+    .fromTo(
+      subtitleRef.current,
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' },
+      '-=0.5'
+    )
+    .fromTo(
+      ctaRef.current,
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' },
+      '-=0.4'
+    );
+
+    return () => tl.kill();
+  }, []);
+
+  const scrollDown = () => {
     if (window.lenis) {
-      window.lenis.scrollTo(href, { duration: 1.2, offset: 0 });
+      window.lenis.scrollTo('#about', { duration: 1.2, offset: -40 });
     } else {
-      const el = document.querySelector(href);
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -39,105 +63,83 @@ export default function Hero() {
     <section
       id="hero"
       ref={sectionRef}
-      className="relative min-h-screen flex flex-col justify-between items-center px-4 sm:px-8 lg:px-12 pt-24 sm:pt-28 pb-8 sm:pb-12 z-10 select-none overflow-hidden"
+      className="relative min-h-screen flex flex-col justify-center px-6 sm:px-8 lg:px-12"
     >
-      {/* Top Status Pill */}
-      <div className="w-full flex justify-center items-center">
-        <div className="glass-pill px-3 sm:px-4 py-1.5 rounded-full flex items-center gap-2 sm:gap-2.5 shadow-xl border border-white/10 hover:border-violet-500/40 transition-colors max-w-[90vw] truncate">
-          <span className="relative flex h-2 w-2 shrink-0">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-          </span>
-          <ShinyText
-            text={PERSONAL_INFO.status}
-            className="text-[11px] sm:text-xs tracking-wider uppercase font-mono font-medium truncate"
-            speed={3.5}
-          />
+      <div className="max-w-6xl mx-auto w-full py-32 sm:py-40">
+        {/* Neon glass status pill */}
+        <div ref={pillRef} className="mb-8">
+          <div className="glass-pill inline-flex items-center gap-2.5 px-4 py-2 glow-neon">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent)] opacity-60" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent)] shadow-[0_0_8px_var(--accent)]" />
+            </span>
+            <span className="text-[11px] font-mono tracking-wider text-neutral-300 uppercase">
+              {PERSONAL_INFO.status}
+            </span>
+          </div>
         </div>
-      </div>
 
-      {/* Main Dramatic Display Typography */}
-      <div className="text-center max-w-5xl mx-auto my-auto flex flex-col items-center w-full px-2">
-        <p className="text-[11px] sm:text-sm uppercase tracking-[0.2em] sm:tracking-[0.3em] text-neutral-400 font-mono mb-3 sm:mb-4 flex items-center gap-2">
-          <Sparkles className="w-3.5 h-3.5 text-violet-400 shrink-0" />
-          <span>Interactive Portfolio & Story</span>
-        </p>
+        {/* Neon accent line */}
+        <div
+          ref={lineRef}
+          className="w-20 h-px mb-10 origin-left"
+          style={{ background: 'linear-gradient(90deg, var(--accent), var(--accent-blue), transparent)' }}
+        />
 
-        <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tight font-display text-white leading-[1.02] sm:leading-[0.95] mb-4 sm:mb-6 break-words max-w-full">
-          <SplitText
-            text={PERSONAL_INFO.name}
-            stagger={0.04}
-            duration={1.0}
-            delay={0.2}
-            splitBy="chars"
-            className="bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent"
-          />
+        {/* Name */}
+        <h1
+          ref={headlineRef}
+          className="text-[clamp(3rem,10vw,8rem)] font-serif font-normal leading-[0.95] tracking-tight text-white mb-6"
+          style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+        >
+          {PERSONAL_INFO.name}
         </h1>
 
-        <div className="max-w-2xl text-sm sm:text-lg md:text-xl text-neutral-300 font-light tracking-wide leading-relaxed">
-          <DecryptedText
-            text={PERSONAL_INFO.role}
-            speed={30}
-            maxIterations={12}
-            className="font-mono text-violet-300/90 font-medium text-xs sm:text-base md:text-lg"
-          />
-          <p className="mt-2.5 sm:mt-3 text-neutral-400 text-xs sm:text-base max-w-xl mx-auto font-sans font-normal leading-normal sm:leading-relaxed">
+        {/* Role & Bio */}
+        <div ref={subtitleRef} className="max-w-xl">
+          <p className="text-base sm:text-lg font-mono font-normal tracking-wide mb-3 text-neon">
+            {PERSONAL_INFO.role}
+          </p>
+          <p className="text-sm sm:text-base text-neutral-400 font-light leading-relaxed">
             {PERSONAL_INFO.shortBio}
           </p>
         </div>
 
-        {/* Action Pills */}
-        <div className="mt-6 sm:mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4 w-full">
-          <Magnet magnetStrength={0.2} padding={30} wrapperClassName="w-full sm:w-auto">
-            <a
-              href="#projects"
-              onClick={(e) => handleCtaClick(e, '#projects')}
-              className="w-full sm:w-auto px-6 sm:px-7 py-3 rounded-full bg-white text-neutral-950 font-medium text-xs sm:text-sm tracking-wide transition-all duration-300 hover:bg-neutral-200 hover:shadow-[0_0_25px_rgba(255,255,255,0.4)] flex items-center justify-center gap-2 text-center"
-            >
-              <span>Explore Projects</span>
-              <ArrowDown className="w-3.5 h-3.5" />
-            </a>
-          </Magnet>
-
-          <Magnet magnetStrength={0.2} padding={30} wrapperClassName="w-full sm:w-auto">
-            <a
-              href="#contact"
-              onClick={(e) => handleCtaClick(e, '#contact')}
-              className="w-full sm:w-auto px-6 sm:px-7 py-3 rounded-full glass-panel text-white font-medium text-xs sm:text-sm tracking-wide transition-all duration-300 hover:border-indigo-400/50 hover:bg-white/10 text-center flex items-center justify-center"
-            >
-              <span>Get In Touch</span>
-            </a>
-          </Magnet>
-
-          {PERSONAL_INFO.resumeUrl && (
-            <Magnet magnetStrength={0.2} padding={30} wrapperClassName="w-full sm:w-auto">
-              <a
-                href={PERSONAL_INFO.resumeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto px-5 sm:px-6 py-3 rounded-full glass-panel text-neutral-300 font-medium text-xs sm:text-sm tracking-wide transition-all duration-300 hover:text-white hover:border-cyan-400/50 hover:bg-white/10 text-center flex items-center justify-center gap-2"
-              >
-                <FileText className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Resume</span>
-              </a>
-            </Magnet>
-          )}
+        {/* CTAs */}
+        <div ref={ctaRef} className="mt-10 flex flex-wrap items-center gap-4">
+          <a
+            href="#projects"
+            onClick={(e) => {
+              e.preventDefault();
+              if (window.lenis) window.lenis.scrollTo('#projects', { duration: 1.2, offset: -40 });
+              else document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="btn-solid px-7 py-3 text-sm tracking-wide"
+          >
+            View Work
+          </a>
+          <a
+            href="#contact"
+            onClick={(e) => {
+              e.preventDefault();
+              if (window.lenis) window.lenis.scrollTo('#contact', { duration: 1.2, offset: -40 });
+              else document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="btn-glass px-7 py-3 text-sm font-light"
+          >
+            Get in Touch
+          </a>
         </div>
       </div>
 
-
-      {/* Bottom Scroll Prompt */}
-      <div className="w-full flex flex-col items-center justify-center gap-3">
-        <button
-          onClick={scrollToNext}
-          className="group flex flex-col items-center gap-2 text-xs font-mono uppercase tracking-[0.25em] text-neutral-500 hover:text-white transition-colors cursor-pointer"
-        >
-          <span>Scroll to enter story</span>
-          <div className="w-5 h-9 rounded-full border border-neutral-700 flex items-start justify-center p-1 group-hover:border-violet-400 transition-colors">
-            <span className="w-1.5 h-2.5 rounded-full bg-violet-400 animate-bounce" />
-          </div>
-        </button>
-      </div>
+      {/* Scroll indicator */}
+      <button
+        onClick={scrollDown}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 glass-pill flex flex-col items-center gap-2 px-4 py-3 text-neutral-400 hover:text-[var(--accent)] transition-colors cursor-pointer"
+      >
+        <span className="text-[10px] font-mono tracking-widest uppercase">Scroll</span>
+        <ArrowDown className="w-3.5 h-3.5 animate-bounce" />
+      </button>
     </section>
   );
 }
