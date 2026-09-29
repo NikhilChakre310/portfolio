@@ -93,85 +93,61 @@ export const SKILLS_DATA = [
 ];
 
 // Flagship Projects
-// TODO: replace with real project data when ready
 export const PROJECTS_DATA = [
   {
-    id: 'chronos-engine',
-    title: 'Chronos Realtime Simulation Engine',
-    subtitle: 'High-performance WebGL time-series visualizer handling 500k telemetry points',
-    category: '3D Simulation / Data Viz',
+    id: 'helmet-numberplate-detection',
+    title: 'AI Helmet & Number Plate Detection',
+    subtitle: 'Real-time automated traffic safety enforcement system using deep learning & computer vision',
+    category: 'Computer Vision & Deep Learning',
     featured: true,
     year: '2025',
-    // TODO: replace with real project data
-    overview: 'An in-browser spatial visualization engine built for autonomous flight logs. Renders orbital trajectories, wind vectors, and sensor anomalies with GPU instanced buffer geometry and custom compute shaders.',
-    technologies: ['React', 'Three.js', 'GLSL', 'Web Workers', 'Tailwind CSS', 'WebSockets'],
+    overview: 'An intelligent surveillance and traffic enforcement pipeline trained on custom deep learning object detection models. Accurately detects two-wheeler riders without safety helmets and isolates vehicle license plates in real-time video streams with OCR text extraction.',
+    technologies: ['Python', 'YOLOv8', 'OpenCV', 'PyTorch', 'Deep Learning', 'Flask', 'OCR'],
     stats: [
-      { label: 'FPS', value: '120fps' },
-      { label: 'Data Points', value: '500,000' },
-      { label: 'GPU Memory', value: '< 65MB' },
+      { label: 'Accuracy', value: '94.8% mAP' },
+      { label: 'Latency', value: '< 35ms' },
+      { label: 'Inference', value: 'Real-time 60fps' },
     ],
-    demoUrl: 'https://example.com/chronos', // TODO: replace with real link
-    repoUrl: 'https://github.com/NikhilChakre310', // TODO: replace with real link
+    demoUrl: 'https://github.com/NikhilChakre310',
+    repoUrl: 'https://github.com/NikhilChakre310',
     gradient: 'from-indigo-500/20 via-violet-500/10 to-transparent',
     accentColor: '#6366f1',
   },
   {
-    id: 'aether-studio',
-    title: 'Aether Generative Soundscapes',
-    subtitle: 'Interactive spatial audio synthesizer with responsive generative WebGL visuals',
-    category: 'Audio / Creative Computing',
+    id: 'turf-booking-platform',
+    title: 'TurfArena — Sports Turf Booking System',
+    subtitle: 'Full-stack arena reservation engine with real-time slot scheduling & automated bookings',
+    category: 'Full-Stack Web Application',
     featured: true,
     year: '2024',
-    // TODO: replace with real project data
-    overview: 'An ambient audio experience where users modulate acoustic harmonic chords mapped to procedural fluid dynamics. Audio spectrum analysis drives vertex displacement on a morphing 3D manifold in real time.',
-    technologies: ['Web Audio API', 'React', 'Three.js', 'GSAP ScrollTrigger', 'Tailwind CSS'],
+    overview: 'An end-to-end sports ground reservation web application designed for athletes and facility owners. Features dynamic calendar slot booking, instant payment gateway integration, responsive dashboard analytics, and automated SMS/email booking notifications.',
+    technologies: ['React', 'Node.js', 'Express', 'MongoDB', 'Tailwind CSS', 'JWT Auth', 'REST APIs'],
     stats: [
-      { label: 'Audio Latency', value: '4.2ms' },
-      { label: 'Oscillators', value: 'Polyphonic 16' },
-      { label: 'Awwwards', value: 'Site of the Day' },
+      { label: 'Slot Booking', value: 'Real-Time' },
+      { label: 'Checkout Time', value: '< 25s' },
+      { label: 'Uptime', value: '99.9%' },
     ],
-    demoUrl: 'https://example.com/aether', // TODO: replace with real link
-    repoUrl: 'https://github.com/NikhilChakre310', // TODO: replace with real link
+    demoUrl: 'https://github.com/NikhilChakre310',
+    repoUrl: 'https://github.com/NikhilChakre310',
     gradient: 'from-cyan-500/20 via-sky-500/10 to-transparent',
     accentColor: '#06b6d4',
   },
   {
-    id: 'nexus-design-system',
-    title: 'Nexus Enterprise Design System',
-    subtitle: 'Multi-brand headless token framework powering 30+ distributed web applications',
-    category: 'Architecture / Design System',
+    id: 'interactive-3d-portfolio',
+    title: 'Immersive 3D Interactive Portfolio',
+    subtitle: 'Next-gen developer showcase featuring procedural WebGL shaders and smooth motion physics',
+    category: 'Creative Tech & Frontend Architecture',
     featured: false,
-    year: '2024',
-    // TODO: replace with real project data
-    overview: 'Engineered an accessible, zero-runtime CSS token engine and component library for cross-platform products. Reduced engineering handoff time by 40% while ensuring 100% WCAG AAA color contrast compliance.',
-    technologies: ['TypeScript', 'React', 'Tailwind CSS', 'Style Dictionary', 'Storybook', 'Figma API'],
+    year: '2026',
+    overview: 'A high-performance personal portfolio built with React 19, Three.js, and GSAP ScrollTrigger. Features real-time GLSL vertex deformation shaders, dynamic particle physics, custom cursor magnetic physics, and an Awwwards-inspired dark aesthetic.',
+    technologies: ['React 19', 'Three.js', 'WebGL / GLSL', 'GSAP ScrollTrigger', 'Tailwind CSS', 'Vite'],
     stats: [
-      { label: 'Adopted Apps', value: '32 Teams' },
-      { label: 'Bundle Footprint', value: '7.8 KB' },
-      { label: 'Accessibility', value: '100% AAA' },
+      { label: 'Animation', value: '60–120 FPS' },
+      { label: 'Architecture', value: 'Vite + React 19' },
+      { label: 'Deployment', value: 'Vercel Edge' },
     ],
-    demoUrl: 'https://example.com/nexus', // TODO: replace with real link
-    repoUrl: 'https://github.com/NikhilChakre310', // TODO: replace with real link
-    gradient: 'from-blue-500/20 via-indigo-500/10 to-transparent',
-    accentColor: '#3b82f6',
-  },
-  {
-    id: 'lumina-cloud',
-    title: 'Lumina Cloud Edge Platform',
-    subtitle: 'Serverless real-time edge telemetry dashboard with collaborative live cursors',
-    category: 'Full-Stack / Distributed Cloud',
-    featured: false,
-    year: '2023',
-    // TODO: replace with real project data
-    overview: 'Distributed monitoring console enabling multi-tenant engineering teams to trace microservice spans in real time with WebSocket CRDT synchronization, optimistic UI updates, and zero-flicker re-renders.',
-    technologies: ['Next.js', 'FastAPI', 'Redis Streams', 'PostgreSQL', 'Tailwind CSS', 'Docker'],
-    stats: [
-      { label: 'Sync Latency', value: '< 18ms' },
-      { label: 'Throughput', value: '12k events/s' },
-      { label: 'Uptime', value: '99.99%' },
-    ],
-    demoUrl: 'https://example.com/lumina', // TODO: replace with real link
-    repoUrl: 'https://github.com/NikhilChakre310', // TODO: replace with real link
+    demoUrl: 'https://nikhilchakre.vercel.app',
+    repoUrl: 'https://github.com/NikhilChakre310/portfolio',
     gradient: 'from-violet-500/20 via-purple-500/10 to-transparent',
     accentColor: '#8b5cf6',
   },
