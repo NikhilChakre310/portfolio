@@ -37,8 +37,18 @@ export default function Navbar({ activeChapterIndex = 0 }) {
     { name: 'Contact', href: '#contact', index: 5 },
   ];
 
-  const handleLinkClick = () => {
+  const handleNavClick = (e, href) => {
+    e.preventDefault();
     setMobileMenuOpen(false);
+
+    if (window.lenis) {
+      window.lenis.scrollTo(href, { offset: 0, duration: 1.2 });
+    } else {
+      const target = document.querySelector(href);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   };
 
   return (
@@ -49,6 +59,7 @@ export default function Navbar({ activeChapterIndex = 0 }) {
           <Magnet magnetStrength={0.25} padding={25}>
             <a
               href="#hero"
+              onClick={(e) => handleNavClick(e, '#hero')}
               className={`px-3.5 sm:px-4 py-2 rounded-2xl transition-all duration-300 flex items-center gap-2.5 ${
                 scrolled
                   ? 'glass-pill shadow-lg shadow-black/40 border-white/10'
@@ -76,6 +87,7 @@ export default function Navbar({ activeChapterIndex = 0 }) {
                 <Magnet key={link.name} magnetStrength={0.2} padding={15}>
                   <a
                     href={link.href}
+                    onClick={(e) => handleNavClick(e, link.href)}
                     className={`px-4 py-1.5 rounded-full text-xs font-mono tracking-wider transition-all duration-200 block ${
                       isActive
                         ? 'bg-white/15 text-white shadow-[0_0_15px_rgba(255,255,255,0.15)] font-semibold'
@@ -94,6 +106,7 @@ export default function Navbar({ activeChapterIndex = 0 }) {
             <Magnet magnetStrength={0.25} padding={20}>
               <a
                 href="#contact"
+                onClick={(e) => handleNavClick(e, '#contact')}
                 className="hidden sm:flex px-4 py-2 rounded-xl glass-pill text-xs font-mono text-neutral-200 hover:text-white hover:border-violet-500/40 transition-colors items-center gap-2 border border-white/10"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
@@ -137,7 +150,7 @@ export default function Navbar({ activeChapterIndex = 0 }) {
                 <a
                   key={link.name}
                   href={link.href}
-                  onClick={handleLinkClick}
+                  onClick={(e) => handleNavClick(e, link.href)}
                   className={`px-5 py-3.5 rounded-2xl text-base font-mono flex items-center justify-between border transition-all ${
                     isActive
                       ? 'bg-white/10 border-violet-500/40 text-white font-bold'
@@ -155,7 +168,7 @@ export default function Navbar({ activeChapterIndex = 0 }) {
             <div className="pt-4">
               <a
                 href="#contact"
-                onClick={handleLinkClick}
+                onClick={(e) => handleNavClick(e, '#contact')}
                 className="w-full py-3.5 rounded-2xl bg-white text-neutral-950 font-mono font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-white/10"
               >
                 <span className="w-2 h-2 rounded-full bg-emerald-500" />

@@ -15,9 +15,23 @@ export default function Hero() {
   const sectionRef = useRef(null);
 
   const scrollToNext = () => {
-    const aboutSection = document.getElementById('about');
-    if (aboutSection) {
-      aboutSection.scrollIntoView({ behavior: 'smooth' });
+    if (window.lenis) {
+      window.lenis.scrollTo('#about', { duration: 1.2, offset: 0 });
+    } else {
+      const aboutSection = document.getElementById('about');
+      if (aboutSection) {
+        aboutSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
+  const handleCtaClick = (e, href) => {
+    e.preventDefault();
+    if (window.lenis) {
+      window.lenis.scrollTo(href, { duration: 1.2, offset: 0 });
+    } else {
+      const el = document.querySelector(href);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -77,6 +91,7 @@ export default function Hero() {
           <Magnet magnetStrength={0.2} padding={30} wrapperClassName="w-full sm:w-auto">
             <a
               href="#projects"
+              onClick={(e) => handleCtaClick(e, '#projects')}
               className="w-full sm:w-auto px-6 sm:px-7 py-3 rounded-full bg-white text-neutral-950 font-medium text-xs sm:text-sm tracking-wide transition-all duration-300 hover:bg-neutral-200 hover:shadow-[0_0_25px_rgba(255,255,255,0.4)] flex items-center justify-center gap-2 text-center"
             >
               <span>Explore Projects</span>
@@ -87,6 +102,7 @@ export default function Hero() {
           <Magnet magnetStrength={0.2} padding={30} wrapperClassName="w-full sm:w-auto">
             <a
               href="#contact"
+              onClick={(e) => handleCtaClick(e, '#contact')}
               className="w-full sm:w-auto px-6 sm:px-7 py-3 rounded-full glass-panel text-white font-medium text-xs sm:text-sm tracking-wide transition-all duration-300 hover:border-indigo-400/50 hover:bg-white/10 text-center flex items-center justify-center"
             >
               <span>Get In Touch</span>

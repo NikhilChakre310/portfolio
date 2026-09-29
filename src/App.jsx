@@ -45,7 +45,7 @@ export default function App() {
       <SoundToggle />
 
       {/* 6. Main Narrative Content Container */}
-      <main id="portfolio-root" className="relative z-10 w-full overflow-hidden">
+      <main id="portfolio-root" className="relative z-10 w-full">
         {/* Chapter 01: Genesis */}
         <Hero />
 

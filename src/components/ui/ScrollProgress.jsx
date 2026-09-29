@@ -21,6 +21,19 @@ export default function ScrollProgress({ activeChapterIndex = 0 }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleChapterClick = (e, id) => {
+    e.preventDefault();
+    const href = `#${id}`;
+    if (window.lenis) {
+      window.lenis.scrollTo(href, { offset: 0, duration: 1.2 });
+    } else {
+      const target = document.querySelector(href);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
   return (
     <>
       {/* Mobile / Tablet Top Scroll Bar */}
@@ -54,6 +67,7 @@ export default function ScrollProgress({ activeChapterIndex = 0 }) {
               <a
                 key={chapter.id}
                 href={`#${chapter.id}`}
+                onClick={(e) => handleChapterClick(e, chapter.id)}
                 className="pointer-events-auto group relative py-1 flex items-center justify-center cursor-pointer"
                 title={chapter.name}
               >

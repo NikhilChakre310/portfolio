@@ -27,6 +27,8 @@ export default function useSmoothScroll() {
       touchMultiplier: 1.5,
     });
 
+    window.lenis = lenis;
+
     lenis.on('scroll', ScrollTrigger.update);
 
     const updateTicker = (time) => {
@@ -36,9 +38,30 @@ export default function useSmoothScroll() {
     gsap.ticker.add(updateTicker);
     gsap.ticker.lagSmoothing(0);
 
+    // Global delegated click listener for internal anchors to ensure smooth Lenis transition
+    const handleAnchorClick = (e) => {
+      const anchor = e.target.closest('a[href^="#"]');
+      if (!anchor) return;
+      const href = anchor.getAttribute('href');
+      if (!href || href === '#' || href === '#!') return;
+
+      const targetElement = document.querySelector(href);
+      if (targetElement) {
+        e.preventDefault();
+        lenis.scrollTo(targetElement, {
+          offset: 0,
+          duration: 1.2,
+        });
+      }
+    };
+
+    document.addEventListener('click', handleAnchorClick, { capture: true });
+
     return () => {
+      document.removeEventListener('click', handleAnchorClick, { capture: true });
       gsap.ticker.remove(updateTicker);
       lenis.destroy();
+      window.lenis = null;
     };
   }, []);
 }
